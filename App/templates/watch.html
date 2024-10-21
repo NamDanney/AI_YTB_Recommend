@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ video.snippet.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>{{ video.snippet.title }}</h1>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </header>
+    <main>
+        <div class="video-player">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.id.videoId }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-details">
+            <p>{{ video.snippet.description }}</p>
+            <p>Published at: {{ video.snippet.publishedAt }}</p>
+        </div>
+        <form id="log-watch-time-form">
+            <input type="hidden" name="video_id" value="{{ video.id.videoId }}">
+            <input type="hidden" name="watch_time" id="watch_time" value="0">
+        </form>
+    </main>
+    <script>
+        let watchTime = 0;
+        setInterval(() => {
+            watchTime += 1;
+            document.getElementById('watch_time').value = watchTime;
+        }, 1000);
+
+        window.addEventListener('beforeunload', () => {
+            fetch('/log_watch_time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    video_id: document.querySelector('input[name="video_id"]').value,
+                    watch_time: watchTime,
+                }),
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Search Results</h1>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </header>
+    <main>
+        <div class="video-list">
+            {% for video in search_results %}
+                <div class="video">
+                    <img src="{{ video.snippet.thumbnails.medium.url }}" alt="{{ video.snippet.title }}">
+                    <h3>{{ video.snippet.title }}</h3>
+                    <a href="{{ url_for('watch', video_id=video.id.videoId) }}" class="watch-button">Watch</a>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

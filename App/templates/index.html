@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Recommendation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Video Recommendation System</h1>
+        <form action="/search" method="POST">
+            <input type="text" name="query" placeholder="Search for videos">
+            <button type="submit">Search</button>
+        </form>
+    </header>
+    <main>
+        <div id="search-results">
+            {% if search_results %}
+                <h2>Search Results</h2>
+                <div class="video-list">
+                    {% for video in search_results %}
+                        <div class="video">
+                            <a href="{{ url_for('watch', video_id=video.id.videoId) }}">
+                                {% if video.snippet.thumbnails %}
+                                    <img src="{{ video.snippet.thumbnails.medium.url }}" alt="{{ video.snippet.title }}">
+                                {% endif %}
+                                <h3>{{ video.snippet.title }}</h3>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div id="recommendations">
+            {% if recommendations %}
+                <h2>Recommended Videos</h2>
+                <div class="video-list">
+                    {% for video in recommendations %}
+                        <div class="video">
+                            <a href="{{ url_for('watch', video_id=video.id.videoId) }}">
+                                {% if video.snippet.thumbnails and video.snippet.thumbnails.medium %}
+                                    <img src="{{ video.snippet.thumbnails.medium.url }}" alt="{{ video.snippet.title }}">
+                                {% endif %}
+                                <h3>{{ video.snippet.title }}</h3>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>
