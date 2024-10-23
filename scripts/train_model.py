@@ -1,17 +1,11 @@
-from sklearn.decomposition import TruncatedSVD
-import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Embedding, LSTM, Flatten, Concatenate, Input, Conv1D, GlobalMaxPooling1D
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import BinaryCrossentropy
-from tensorflow.keras.metrics import Accuracy
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import numpy as np
-import json
 from scripts.data_preprocessing import remove_duplicates
 from scripts.untils import parse_duration, read_video_data
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -37,8 +31,12 @@ def preprocess_data():
     vectorizer = CountVectorizer(max_df=0.8, min_df=2)
     X_text = vectorizer.fit_transform(text_data).toarray()
     
-    views = [int(video['statistics']['viewCount']) for video in video_data]
-    likes = [int(video['statistics']['likeCount']) for video in video_data]
+    # Padding the text data to ensure consistent input shape
+    max_length = 100
+    X_text = pad_sequences(X_text, maxlen=max_length, padding='post')
+    
+    views = [int(video.get('statistics', {}).get('viewCount', 0)) for video in video_data]
+    likes = [int(video.get('statistics', {}).get('likeCount', 0)) for video in video_data]
     durations = [parse_duration(video['contentDetails']['duration']) if 'contentDetails' in video else 0 for video in video_data]
     
     numerical_features = np.column_stack((views, likes, durations))

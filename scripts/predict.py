@@ -2,8 +2,6 @@ import json
 from flask import Flask
 import numpy as np
 from keras.models import load_model
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.preprocessing import StandardScaler
 from keras.preprocessing.sequence import pad_sequences
 from scripts.untils import parse_duration
 from scripts.untils import read_video_data, read_user_data

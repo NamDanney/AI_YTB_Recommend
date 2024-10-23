@@ -1,4 +1,3 @@
-import json
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import StandardScaler
@@ -63,4 +62,4 @@ if __name__ == "__main__":
     model.fit([X_train_text, X_train_num], np.ones(len(X_train_text)), epochs=10, batch_size=32, validation_split=0.2)
     model.evaluate([X_test_text, X_test_num], np.ones(len(X_test_text)))
 
-    model.save('cnn_content_filtering_model.h5')
+    model.save('cnn_content_filtering_model.keras')

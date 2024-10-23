@@ -1,18 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 import numpy as np
-from sklearn.decomposition import TruncatedSVD
 from scripts.data_collection import save_user_behavior, collect_video_data
 from scripts.data_preprocessing import remove_duplicates
 from scripts.predict import preprocess_input_data, recommend_top_videos
 from tensorflow.keras.models import load_model
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.preprocessing import StandardScaler
 import json
 from scripts.untils import parse_duration, read_video_data
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from scripts.train_model import preprocess_text_data, preprocess_data, build_model
 import pickle
 
 app = Flask(__name__)
