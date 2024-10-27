@@ -11,6 +11,8 @@ from scripts.untils import parse_duration, read_video_data
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import pickle
+import os
+import matplotlib.pyplot as plt
 
 def preprocess_text_data(text_data, max_length=100):
     # Tokenization and Vectorization
@@ -74,6 +76,24 @@ def build_model(input_shape_text, input_shape_num):
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     return model
 
+def plot_training_history(history):
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc='upper left')
+    plt.show()
+
+    # Plot training & validation loss values
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc='upper left')
+    plt.show()
+plt.show()
 
 def train_model():
     X_train_text, X_test_text, X_train_num, X_test_num, vectorizer, scaler, video_data = preprocess_data()
@@ -86,7 +106,10 @@ def train_model():
     
     # Define callbacks
     early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-    model_checkpoint = ModelCheckpoint('best_model.keras', save_best_only=True, monitor='val_loss')
+    
+    # Use an absolute path for the model checkpoint
+    checkpoint_path = os.path.join(os.getcwd(), 'best_model.keras')
+    model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, monitor='val_loss')
     
     # Train the model with validation data and callbacks
     history = model.fit(
@@ -100,8 +123,11 @@ def train_model():
     
     model.evaluate([X_test_text, X_test_num], np.ones(len(X_test_text)))
 
-    model.save('cnn_content_filtering_model.keras')
+    # Save the model using an absolute path
+    model_save_path = os.path.join(os.getcwd(), 'cnn_content_filtering_model.keras')
+    model.save(model_save_path)
     
+    plot_training_history(history)
     return model, X_test_text, X_test_num, history
 
 def evaluate_model(model, X_test_text, X_test_num, y_test):
@@ -126,6 +152,8 @@ def check_accuracy(accuracy):
         print("Model accuracy meets the requirement.")
     else:
         print("Model accuracy does not meet the requirement.")
+# Plot training & validation accuracy values
+
 
 if __name__ == "__main__":
     try:

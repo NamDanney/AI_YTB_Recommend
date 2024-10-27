@@ -2,8 +2,13 @@ import json
 import csv
 
 def read_video_data(file_path):
+    video_data = []
     with open(file_path, 'r', encoding='utf-8') as f:
-        video_data = [json.loads(line) for line in f]
+        for line in f:
+            try:
+                video_data.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON on line: {line}\nError: {e}")
     return video_data
 
 def read_user_data(file_path):
